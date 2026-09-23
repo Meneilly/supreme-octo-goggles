@@ -1,0 +1,564 @@
+<title>Payroll Onboarding Portal Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --sunk:#EDF1F6; --ink:#1B2438; --muted:#56627A; --line:#D9DFE8;
+  --accent:#0E7466; --accent-soft:#E0F1EE; --flag:#9A5B00; --flag-soft:#FFF1D9; --warn:#B3261E; --warn-soft:#FDE8E6;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#11151E; --surface:#181E2B; --sunk:#1F2736; --ink:#E7EAF0; --muted:#A1AABB; --line:#2C3547;
+    --accent:#4CC3AE; --accent-soft:#16332F; --flag:#F0B85A; --flag-soft:#33280F; --warn:#FF8A80; --warn-soft:#3A1A18;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#11151E; --surface:#181E2B; --sunk:#1F2736; --ink:#E7EAF0; --muted:#A1AABB; --line:#2C3547;
+  --accent:#4CC3AE; --accent-soft:#16332F; --flag:#F0B85A; --flag-soft:#33280F; --warn:#FF8A80; --warn-soft:#3A1A18;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;padding-inline:16px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:220px minmax(0,1fr);gap:48px;padding-block:40px 80px}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr);gap:0;padding-block:24px 64px}.toc{display:none}}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;font-size:15px}
+.toc p{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.toc a:hover,.toc a:focus-visible{background:var(--sunk);color:var(--ink)}
+main{min-width:0}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(34px,5vw,50px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:28px;font-weight:700;margin-bottom:14px}
+h3{font-size:20px;font-weight:600;margin-bottom:8px}
+p{margin:0 0 12px;max-width:68ch}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+header.top{padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:16px;font-size:15px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+.lede{font-size:20px;margin-top:18px;max-width:62ch}
+section{padding-block:40px 8px;scroll-margin-top:16px}
+.muted{color:var(--muted)}
+.flag{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;color:var(--flag);background:var(--flag-soft);border-radius:999px;padding:1px 9px;white-space:nowrap;vertical-align:1px}
+.hl{color:var(--accent);font-weight:700}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-block:8px 16px}
+table{border-collapse:collapse;width:100%;font-size:15.5px}
+th,td{text-align:left;vertical-align:top;padding:11px 14px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-size:13px;font-weight:700;color:var(--muted);background:var(--sunk);letter-spacing:.02em}
+td:first-child{font-weight:600}
+.goals td:first-child{width:38%}
+
+/* flow */
+.flow{display:grid;gap:10px;justify-items:center;margin-block:16px 8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 16px}
+.node{border:1.5px solid var(--ink);border-radius:8px;padding:8px 14px;text-align:center;font-weight:600;background:var(--surface);max-width:100%}
+.node small{display:block;font-weight:400;color:var(--muted);font-size:13.5px}
+.node.hub{border-color:var(--accent);background:var(--accent-soft)}
+.arrow{color:var(--muted);font-size:18px;line-height:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:640px}
+.chip{font-size:14px;border:1px solid var(--line);background:var(--sunk);border-radius:999px;padding:3px 11px}
+.chip b{font-family:var(--mono);font-size:12px;color:var(--accent);margin-right:4px}
+.fork{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:520px}
+.fork .node{font-size:15px}
+ul.points{margin:12px 0 0;padding-left:20px;display:grid;gap:6px;max-width:70ch}
+
+/* mockups */
+.mocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;margin-top:18px}
+.mock figcaption{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+figure{margin:0}
+.screen{border:1.5px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden;font-size:14px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--sunk);font-weight:600;font-size:13px}
+.pill{border:1px solid var(--accent);color:var(--accent);border-radius:999px;padding:1px 9px;font-size:12px;white-space:nowrap}
+.scr-body{padding:14px;display:grid;gap:10px}
+.video{aspect-ratio:16/9;max-width:100%;border-radius:8px;background:var(--sunk);display:grid;place-items:center;color:var(--muted);font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{border:1px solid var(--line);border-radius:8px;padding:8px;min-height:74px;display:flex;flex-direction:column;justify-content:space-between;font-size:12.5px;font-weight:600}
+.tile span{font-weight:400;color:var(--muted);font-size:11.5px}
+.tile.done span{color:var(--accent)}
+.tile.next{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.progress{height:6px;border-radius:9px;background:var(--sunk);overflow:hidden}
+.progress i{display:block;height:100%;width:43%;background:var(--accent)}
+.btn{display:block;text-align:center;border-radius:8px;padding:8px;font-weight:700;font-size:13px}
+.btn.main{background:var(--accent);color:var(--surface)}
+.btn.ghost{border:1px solid var(--line);color:var(--muted)}
+.btnrow{display:flex;gap:8px}.btnrow .btn{flex:1}
+.dots{display:flex;gap:4px}.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--accent)}
+.illo{height:64px;border-radius:8px;background:repeating-linear-gradient(135deg,var(--sunk) 0 8px,transparent 8px 16px);border:1px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-size:12px}
+.bigfact{font-family:var(--display);font-size:28px;font-weight:700;color:var(--accent);line-height:1.05}
+.cardtext{font-size:14px;margin:0}
+.more{font-size:13px;color:var(--accent);font-weight:600}
+.audio{display:flex;gap:12px;font-size:12.5px;color:var(--muted)}
+
+.rules{counter-reset:r;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:14px}
+.rules div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:15.5px}
+.rules b{display:block;font-family:var(--display);font-size:16.5px;margin-bottom:4px}
+
+/* card inventory */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:14px;font-size:15px}
+.toolbar label{display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600}
+.toolbar input{width:18px;height:18px;accent-color:var(--accent)}
+.deck{margin-top:28px}
+.deckhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:4px}
+.deckhead .time{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.deck > p.note{font-size:15.5px;color:var(--muted);font-style:italic}
+.cards{list-style:none;margin:10px 0 0;padding:0;border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.cards li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.cards li:last-child{border-bottom:0}
+.cards .n{font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:3px}
+.cards .t{font-weight:700}
+.cards .c{grid-column:2;font-size:15.5px}
+.cards .c q{quotes:"“" "”"}
+body.only-flags .cards li:not(.has-flag){display:none}
+body.only-flags .deck:not(:has(li.has-flag)){display:none}
+
+.versions{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px}
+.ver{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.ver.rec{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.ver .tag{display:inline-block;font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 9px;margin-bottom:8px}
+.ver dl{margin:10px 0 0;display:grid;gap:8px;font-size:15.5px}
+.ver dt{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.ver dd{margin:0}
+.callout{background:var(--accent-soft);border-radius:10px;padding:14px 18px;margin-top:14px;max-width:none}
+.callout p{margin:0}
+
+.phases{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:0;counter-reset:ph}
+.phases li{counter-increment:ph;display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;padding-bottom:16px;position:relative}
+.phases li::before{content:counter(ph);width:30px;height:30px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-size:13px;background:var(--bg);z-index:1}
+.phases li:not(:last-child)::after{content:"";position:absolute;left:15px;top:30px;bottom:0;width:1.5px;background:var(--line)}
+.phases b{display:block}
+
+.questions{margin:14px 0 0;padding-left:24px;display:grid;gap:10px;max-width:72ch}
+.questions li::marker{font-family:var(--mono);color:var(--muted);font-size:14px}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+@media (max-width:520px){
+  body{font-size:16px}
+  .fork{grid-template-columns:1fr}
+  .cards li{grid-template-columns:40px minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:no-preference){a,.toc a{transition:background .15s,color .15s}}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p>Contents</p>
+  <ol>
+    <li><a href="#summary">1. Summary</a></li>
+    <li><a href="#structure">2. Structure</a></li>
+    <li><a href="#screens">3. Screens &amp; cards</a></li>
+    <li><a href="#content">4. Card content</a></li>
+    <li><a href="#engagement">5. Engagement</a></li>
+    <li><a href="#versions">6. Two versions</a></li>
+    <li><a href="#staff">7. Staff side</a></li>
+    <li><a href="#phases">8. Phases</a></li>
+    <li><a href="#questions">9. Open questions</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="top">
+  <div class="eyebrow">CILNI Payroll · Draft v0.1 for discussion</div>
+  <h1>Payroll Onboarding Portal</h1>
+  <p class="lede">A plan for a click-through card deck that teaches new employers what the payroll setup call covers, and lets confident clients finish without waiting for a call.</p>
+  <div class="meta">
+    <span><b>For:</b> Brendan (Payroll) and Kevin</span>
+    <span><b>Covers:</b> layout, interactions and content. Branding comes later.</span>
+    <span><b>Sources:</b> <i>First Call Step by Step</i>, <i>Call alternative (Staffology)</i>, setup meeting of 21 Sept 2026</span>
+  </div>
+  <p class="muted" style="margin-top:14px;font-size:15px">Items marked <span class="flag">⚑ Confirm</span> need Brendan to confirm the current process or figure.</p>
+</header>
+
+<section id="summary">
+  <div class="eyebrow">1 · Summary</div>
+  <h2>What we're building</h2>
+  <p>A friendly deck of cards covering who's who, the monthly routine, the documents employers get, HMRC, and their responsibilities. It is <b>not a test</b>. It's split into short sections the employer can come back to at any time, for example opening the payslip section with their first payslip in front of them.</p>
+  <p>At the end they choose <b>"I'm confident, start my payroll"</b> or <b>"I'd like a call"</b>. The call stays as the safety net. The portal is an alternative for confident clients, not a replacement for everyone.</p>
+
+  <h3 style="margin-top:24px">Goals from the meeting</h3>
+  <div class="tbl"><table class="goals">
+    <thead><tr><th>Goal</th><th>What it means for the design</th></tr></thead>
+    <tbody>
+      <tr><td>Fewer setup calls. Even 30–35% of clients skipping the call is a win.</td><td>A clear choice at the end. Confident clients finish without waiting for an appointment.</td></tr>
+      <tr><td>Keep the human feel, CILNI's biggest selling point</td><td>Warm, plain English. Brendan's voice narrates each card. A "you're not alone" message. A call is always one tap away.</td></tr>
+      <tr><td>People take in the key points instead of racing to the tick box</td><td>Short cards with one idea each. Key facts large and in colour. Light interactions and recap cards.</td></tr>
+      <tr><td>No quizzes, because they feel like a test</td><td>Calculators, tap-to-reveal and "Got it" recaps. Never right or wrong answers.</td></tr>
+      <tr><td>Persistent, so people can come back</td><td>Saved progress, a section hub, and every section stays open after they finish.</td></tr>
+      <tr><td>Covers CILNI on liability</td><td>Record which cards were viewed, plus a timestamped acknowledgement at the end.</td></tr>
+      <tr><td>Works on a phone or tablet</td><td>Designed for mobile first. Big buttons, swipe to go forward or back, landscape works.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 style="margin-top:24px">Who it's for</h3>
+  <p>The person who will be the <b>registered employer</b>. That's often a parent or family member managing a direct payment for the service user. Technical ability varies hugely: some clients are very confident, others are proud just to get a password in. Write for a stressed reader who has just been through a long process with the Trust.</p>
+</section>
+
+<section id="structure">
+  <div class="eyebrow">2 · Structure</div>
+  <h2>How someone moves through it</h2>
+  <div class="flow" role="img" aria-label="Flow: link, welcome, hub with seven sections, wrap-up, then a choice between starting payroll or requesting a call, then a done page. The portal stays available afterwards.">
+    <div class="node">Welcome<small>Short video and "how this works"</small></div>
+    <div class="arrow">↓</div>
+    <div class="node hub">Hub page<small>Section tiles and progress · come back any time</small></div>
+    <div class="arrow">↓</div>
+    <div class="chips">
+      <span class="chip"><b>1</b>Who's who</span><span class="chip"><b>2</b>Staff &amp; pay</span><span class="chip"><b>3</b>Monthly routine</span><span class="chip"><b>4</b>Documents</span><span class="chip"><b>5</b>HMRC</span><span class="chip"><b>6</b>Responsibilities</span><span class="chip"><b>7</b>When things change</span>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="node">Wrap-up<small>3 recap cards, then the acknowledgement</small></div>
+    <div class="arrow">↓</div>
+    <div class="fork">
+      <div class="node">I'm confident<small>Start my payroll</small></div>
+      <div class="node">I'd like a call<small>Availability and questions</small></div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="node">What happens next<small>The portal stays available as a reference</small></div>
+  </div>
+  <ul class="points">
+    <li><b>Suggested order, not locked.</b> The hub numbers the sections and highlights "Up next", but any section can be opened. The Finish step unlocks once every section has been viewed. That gives us a liability record without trapping anyone.</li>
+    <li><b>About 20–25 minutes in total,</b> 2–4 minutes per section. Each tile shows its time, which reassures people.</li>
+    <li><b>"Talk to us" is on every screen,</b> so nobody feels stuck.</li>
+  </ul>
+</section>
+
+<section id="screens">
+  <div class="eyebrow">3 · Screens &amp; cards</div>
+  <h2>The three main screens</h2>
+  <p>Rough layouts only. Styling and branding come later.</p>
+  <div class="mocks">
+    <figure class="mock">
+      <figcaption>Welcome · first visit</figcaption>
+      <div class="screen">
+        <div class="bar"><span>CILNI Payroll</span><span class="pill">☎ Talk to us</span></div>
+        <div class="scr-body">
+          <b style="font-size:16px">Welcome to CILNI Payroll, Mary</b>
+          <div class="video">▶ Welcome video · 2–3 min</div>
+          <div style="font-size:13px;line-height:1.5">• 7 short sections, about 20 minutes<br>• Not a test: no wrong answers<br>• Stop any time. We'll save your place<br>• Prefer to talk? Ask for a call any time</div>
+          <div class="btnrow"><span class="btn main">Let's start</span><span class="btn ghost">I'd rather talk</span></div>
+        </div>
+      </div>
+    </figure>
+    <figure class="mock">
+      <figcaption>Hub · landing page</figcaption>
+      <div class="screen">
+        <div class="bar"><span>Hi Mary · 3 of 7 done</span><span class="pill">☎ Talk to us</span></div>
+        <div class="scr-body">
+          <div class="progress"><i></i></div>
+          <div class="tiles">
+            <div class="tile done">1 Who's who<span>✓ Done</span></div>
+            <div class="tile done">2 Staff &amp; pay<span>✓ Done</span></div>
+            <div class="tile done">3 Monthly routine<span>✓ Done</span></div>
+            <div class="tile next">4 Documents<span>▶ Up next · 5 min</span></div>
+            <div class="tile">5 HMRC<span>4 min</span></div>
+            <div class="tile">6 Responsibilities<span>5 min</span></div>
+          </div>
+          <div style="font-size:12.5px;color:var(--muted)">Quick links: Reading your payslip · Paying HMRC · Jargon buster</div>
+          <span class="btn ghost">Finish &amp; choose next step (locked)</span>
+        </div>
+      </div>
+    </figure>
+    <figure class="mock">
+      <figcaption>Card view · the core screen</figcaption>
+      <div class="screen">
+        <div class="bar"><span>← Hub · 4 Documents</span><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></div>
+        <div class="scr-body">
+          <div class="illo">illustration</div>
+          <div><div style="font-weight:700">Pay HMRC on the</div><div class="bigfact">same day</div><div style="font-weight:700">you pay your employee.</div></div>
+          <p class="cardtext">Your P30 shows one total. It covers tax, National Insurance and student loan for all your staff.</p>
+          <span class="more">▸ Tell me more</span>
+          <div class="audio"><span>🔊 Listen 0:25</span><span>Show transcript</span></div>
+          <div class="btnrow"><span class="btn ghost">‹ Back</span><span class="btn ghost">? I'd like help</span><span class="btn main">Next ›</span></div>
+        </div>
+      </div>
+    </figure>
+  </div>
+  <p class="muted" style="margin-top:12px;font-size:15px">After they finish, the hub becomes their reference page. The quick links matter most then: "I've just got my first payslip, what does it mean?"</p>
+
+  <h3 style="margin-top:28px">Rules for every card</h3>
+  <div class="rules">
+    <div><b>One idea per card</b>A heading and 1–3 short sentences, about 40 words at most.</div>
+    <div><b>Facts and figures stand out</b>Numbers, dates and do/don'ts are larger and in colour: <span class="hl">7 days</span>, <span class="hl">13 characters</span>, <span class="hl">5.6 weeks</span>.</div>
+    <div><b>"Tell me more"</b>An expander for the detail Brendan adds on the call, so the card itself stays short.</div>
+    <div><b>Brendan's narration</b>Optional audio with a transcript. His tone carries emphasis and reassurance text can't, especially employer vs employee.</div>
+    <div><b>"I'd like help with this"</b>Flags the card. Flagged topics go with any call request, so Brendan knows what someone struggled with.</div>
+    <div><b>Jargon is tappable</b>Underlined terms open a plain-English definition, for example <i>nominated representative</i> or <i>P30</i>.</div>
+  </div>
+
+  <h3 style="margin-top:28px">Card types</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Type</th><th>Used for</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Info</td><td>A single point</td><td>"We're your payroll provider, not your funder"</td></tr>
+      <tr><td>Key figure</td><td>A number to remember</td><td>Pay date is <b>1 calendar month</b> after your first employee starts</td></tr>
+      <tr><td>Do / Don't</td><td>Rules</td><td>✗ Don't pay cash · ✓ Bank transfer or cheque</td></tr>
+      <tr><td>Annotated document</td><td>Payslip, Trust summary, P30</td><td>A sample payslip with numbered hotspots to tap</td></tr>
+      <tr><td>Timeline / cycle</td><td>The monthly routine</td><td>A circular diagram with each step revealed in turn</td></tr>
+      <tr><td>Try it</td><td>Makes a rule personal. Nothing is submitted.</td><td>Enter a start date and see "Your first pay date is <b>17 June</b>, then the <b>17th</b> of every month"</td></tr>
+      <tr><td>What would you do?</td><td>Scenarios, never scored</td><td>"You get an HMRC letter for money you've already paid" → tap to see the answer</td></tr>
+      <tr><td>Section recap</td><td>End of each section</td><td>"3 things to remember" and a <b>Got it</b> button</td></tr>
+      <tr><td>Video</td><td>Welcome now, 60–90 second clips later</td><td>"Opening your payslip"</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="content">
+  <div class="eyebrow">4 · Card content</div>
+  <h2>Every card, section by section</h2>
+  <p>Draft wording in the portal's voice: plain English, second person, warm. About 55–60 cards in total.</p>
+  <div class="toolbar">
+    <label for="onlyFlags"><input type="checkbox" id="onlyFlags"> Only show cards that need confirming</label>
+    <span class="muted" id="flagCount"></span>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>0 · Welcome</h3><span class="time">3 cards</span></div>
+    <ul class="cards">
+      <li><span class="n">0.1</span><span class="t">Welcome video</span><span class="c">2–3 minutes: who we are, what the portal covers, and the promise that we're here to help.</span></li>
+      <li><span class="n">0.2</span><span class="t">You're not alone</span><span class="c"><q>Setting up as an employer can feel like a lot, especially after everything with the Trust. Many of our team have been through direct payments themselves, or with family. Every situation is a bit different, but we'll always do our best to help.</q></span></li>
+      <li><span class="n">0.3</span><span class="t">How this works</span><span class="c">About 20 minutes, no test, save and come back, ask for a call any time.</span></li>
+    </ul>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>1 · Who's who</h3><span class="time">6 cards · ~3 min</span></div>
+    <p class="note">Most submission-form mistakes come from getting these roles wrong, so this section comes first.</p>
+    <ul class="cards">
+      <li><span class="n">1.1</span><span class="t">You are the employer</span><span class="c"><q>The <b>employer</b> is the person who agreed with CILNI's Advice Team to take on this role. HMRC will register <b>you</b> and write to <b>you</b>.</q> Tell me more: this isn't always the person who receives care. If you manage the account for a family member, it's usually you.</span></li>
+      <li><span class="n">1.2</span><span class="t">The employee</span><span class="c"><q>Your <b>employee</b> is the person you pay to provide support, such as a personal assistant.</q> <b>The employer and the employee can never be the same person.</b></span></li>
+      <li><span class="n">1.3</span><span class="t">The Trust funds you. We run the payroll.</span><span class="c"><q>Your Health &amp; Social Care Trust provides the funding. CILNI is your <b>payroll provider</b>. We don't hold your money, can't see your bank account, and can't change your funding.</q></span></li>
+      <li class="has-flag"><span class="n">1.4</span><span class="t">What you tell us, we report <span class="flag">⚑ Confirm</span></span><span class="c"><q>As a payroll bureau, we're <b>legally required</b> to report any hours and pay you tell us about to HMRC. So only tell us about work paid for from your direct payment. A gift to a friend or family member isn't payroll. If you're unsure whether something counts, ask us before you send it in.</q> Wording to agree with Brendan and Kevin. This replaces the tactful "have a think before you tell us" line from the call.</span></li>
+      <li><span class="n">1.5</span><span class="t">Nominated representative</span><span class="c"><q>Someone you choose to deal with CILNI on your behalf, using your authority. You can remove them at any time. Only <b>you or your nominated representative</b> can make changes. Social workers can't.</q></span></li>
+      <li><span class="n">1.6</span><span class="t">Recap</span><span class="c">You're the employer · the Trust funds and we run payroll · we must report what you tell us. <b>Got it</b></span></li>
+    </ul>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>2 · Your staff and their pay</h3><span class="time">7 cards · ~4 min</span></div>
+    <ul class="cards">
+      <li><span class="n">2.1</span><span class="t">Check your details</span><span class="c"><q>Before we start, we'll confirm each employee's <b>start date, hours and rate of pay</b>. These often change after the Advice Team first sees them, so tell us if anything is different.</q></span></li>
+      <li class="has-flag"><span class="n">2.2</span><span class="t">Set hours or variable hours? <span class="flag">⚑ Confirm</span></span><span class="c">Side by side. <b>Monthly (set hours):</b> the same hours every month, predictable. <b>Variable (zero hours):</b> hours change month to month. Tell me more: pros and cons of each. Brendan to supply the points he gives on the call.</span></li>
+      <li class="has-flag"><span class="n">2.3</span><span class="t">Your pay rate <span class="flag">⚑ Confirm</span></span><span class="c"><q>Your rate is either <b>set by a budget from our team</b>, or <b>chosen by you</b>, as long as it's at or above the <b>National Minimum Wage</b>.</q> Caution: if you choose your own rate, our support is limited if it leads to a surplus or shortfall in funding. Show the current minimum wage figure.</span></li>
+      <li><span class="n">2.4</span><span class="t">Your pay date (try it)</span><span class="c"><q>Your pay date is <b>one calendar month</b> after your first employee starts.</q> Calculator: enter the start date → <q>Your first pay date is <b>17 June 2026</b>, then the <b>17th</b> of every month.</q></span></li>
+      <li><span class="n">2.5</span><span class="t">Payments for earlier work</span><span class="c"><q>If you ask us to pay for work done before payroll started, we can, but it goes through payroll and <b>it will be taxed</b>.</q></span></li>
+      <li class="has-flag"><span class="n">2.6</span><span class="t">CILNI's fees <span class="flag">⚑ Confirm</span></span><span class="c">"Give details about CILNI payments" is on the call checklist. Brendan to supply the content.</span></li>
+      <li><span class="n">2.7</span><span class="t">Recap</span><span class="c"><b>Got it</b></span></li>
+    </ul>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>3 · Your monthly routine</h3><span class="time">7 cards · ~4 min</span></div>
+    <p class="note">The heart of the portal. Brendan's end-of-call summary: we email you, you check it, we send documents, you pay the employee and HMRC, and you move on with your month.</p>
+    <ul class="cards">
+      <li><span class="n">3.1</span><span class="t">The month in 4 steps</span><span class="c">Cycle diagram: <b>① We email you → ② You check the hours → ③ We send your documents → ④ You pay your employee and HMRC.</b></span></li>
+      <li class="has-flag"><span class="n">3.2</span><span class="t">① Our email: 7 days before pay day <span class="flag">⚑ Confirm</span></span><span class="c"><q>Each month, <b>7 days before your pay date</b>, we'll email asking you to confirm your employees' hours.</q> The written guide says always reply. Brendan's call summary says "no changes? you can ignore it". Which is correct?</span></li>
+      <li><span class="n">3.3</span><span class="t">② The three types of hours</span><span class="c"><b>Standard hours:</b> based on your weekly funding from the Trust, and can be shared across employees. <b>Annual leave:</b> paid time off, and we keep a running total. <b>Extra hours:</b> for example covering someone's holiday, shown separately on the payslip.</span></li>
+      <li><span class="n">3.4</span><span class="t">Reply to payroll@cilni.org</span><span class="c"><q>Send your hours back as soon as you can. We need <b>at least 1 full working day</b> to prepare your documents. In busy periods, please allow up to your pay date.</q></span></li>
+      <li><span class="n">3.5</span><span class="t">③ What arrives</span><span class="c">Payslips · summary for the Trust · P30 (HMRC payment). Each is covered in section 4.</span></li>
+      <li><span class="n">3.6</span><span class="t">④ Pay day</span><span class="c"><q>Pay your employee the <b>net pay</b> shown at the bottom of their payslip, and pay HMRC the amount on your P30, <b>ideally on the same day</b>.</q></span></li>
+      <li><span class="n">3.7</span><span class="t">Recap</span><span class="c"><b>Got it</b></span></li>
+    </ul>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>4 · Your documents</h3><span class="time">10 cards · ~5 min</span></div>
+    <ul class="cards">
+      <li><span class="n">4.1</span><span class="t">Opening your payslips 🔒</span><span class="c"><q>Payslips are <b>password-protected</b>. Pick a password you're happy to share with your employee.</q></span></li>
+      <li><span class="n">4.2</span><span class="t">Password trouble?</span><span class="c">Tips: passwords are case-sensitive · watch for extra spaces · try copying and pasting it · still stuck? Tap "I'd like help" and we'll check it with you. This is the biggest frustration on calls, so it gets its own card and, later, a 60-second video.</span></li>
+      <li><span class="n">4.3</span><span class="t">Reading a payslip (annotated)</span><span class="c">Sample payslip with hotspots: ① gross pay ② <b>tax code</b> ③ income tax ④ <b>National Insurance</b> ⑤ <b>pension</b> ⑥ student loan, if any ⑦ <b>net pay</b>, the amount you pay.</span></li>
+      <li class="has-flag"><span class="n">4.4</span><span class="t">Why are there deductions? <span class="flag">⚑ Confirm</span></span><span class="c">Tell me more cards on tax code, NI and pension in plain English, based on Brendan's explanations from the call.</span></li>
+      <li class="has-flag"><span class="n">4.5</span><span class="t">Check it, then send it <span class="flag">⚑ Confirm</span></span><span class="c"><q>If the payslip looks right, send it to your employee <b>with their pay</b>. If something's wrong, tell us and we'll fix it before you pay.</q> Employees can also receive payslips directly. Is this still offered?</span></li>
+      <li><span class="n">4.6</span><span class="t">The summary for the Trust (annotated)</span><span class="c"><q>A <b>gross-to-net summary</b> of each month's payroll. Keep it for your records. The Trust may ask for it <b>quarterly</b>, along with your <b>bank statements</b>.</q></span></li>
+      <li class="has-flag"><span class="n">4.7</span><span class="t">Why the Trust wants bank statements <span class="flag">⚑ Confirm</span></span><span class="c">They check your spending matches your payroll. Tell me more: not every Trust asks regularly. Belfast Trust is the one most likely to.</span></li>
+      <li><span class="n">4.8</span><span class="t">Your buffer</span><span class="c"><q>The Trust pays an <b>advance of 5–8 weeks</b> of funding, so there should always be money in the account on pay day.</q></span></li>
+      <li><span class="n">4.9</span><span class="t">The P30 (annotated)</span><span class="c"><q>Shows <b>one total</b> owed to HMRC for all your employees: income tax, NI and student loan combined. You don't need to work anything out.</q></span></li>
+      <li><span class="n">4.10</span><span class="t">Recap</span><span class="c"><b>Got it</b></span></li>
+    </ul>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>5 · HMRC</h3><span class="time">7 cards · ~4 min</span></div>
+    <p class="note">A real case: a client didn't read the written guide, paid nothing, and was then angry about HMRC letters. This section has to stand out.</p>
+    <ul class="cards">
+      <li><span class="n">5.1</span><span class="t">We register you with HMRC</span><span class="c"><q>Once you've confirmed your details are right, <b>we</b> register you as an employer with HMRC. It's the tax for your employees, not your own tax bill.</q></span></li>
+      <li><span class="n">5.2</span><span class="t">⚠ Don't pay HMRC yet</span><span class="c"><q>Until your HMRC references arrive, <b>don't pay HMRC</b>. You <b>can</b> still pay your employees, and the payslip figures are correct.</q> Big warning styling.</span></li>
+      <li class="has-flag"><span class="n">5.3</span><span class="t">Your 13-character reference <span class="flag">⚑ Confirm</span></span><span class="c"><q>In about <b>2 weeks</b> we'll email your HMRC bank details and your <b>13-character reference</b>. It <b>never changes</b>.</q> Confirm the timescale.</span></li>
+      <li><span class="n">5.4</span><span class="t">Set up HMRC as a payee</span><span class="c"><q>Add HMRC as a payee in your online banking with your 13-character reference. Then each month, just pay that payee.</q> Other options: cheque or phone. Tell me more: step by step for common banks.</span></li>
+      <li class="has-flag"><span class="n">5.5</span><span class="t">Why the dates don't match <span class="flag">⚑ Confirm</span></span><span class="c"><q>HMRC's months run from the <b>6th to the 5th</b>, so the tax period on your P30 won't always match your pay date. That's normal.</q> Check this matches how Brendan explains it.</span></li>
+      <li><span class="n">5.6</span><span class="t">What would you do? (tap to reveal)</span><span class="c">"You get an HMRC letter asking for money." <b>Already paid?</b> Contact us and we'll help challenge it. <b>Not paid?</b> Pay the amount due. A little interest may be added.</span></li>
+      <li><span class="n">5.7</span><span class="t">Recap</span><span class="c"><b>Got it</b></span></li>
+    </ul>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>6 · Your responsibilities as an employer</h3><span class="time">10 cards · ~5 min</span></div>
+    <ul class="cards">
+      <li><span class="n">6.1</span><span class="t">Don't pay cash</span><span class="c"><q>Always pay by <b>bank transfer or cheque</b>. Cash leaves no record, and if an employee disputes their pay you'd have no proof.</q></span></li>
+      <li class="has-flag"><span class="n">6.2</span><span class="t">Sickness <span class="flag">⚑ Confirm</span></span><span class="c"><q>If your employee is off sick, tell us when you send in the hours. They may be entitled to <b>Statutory Sick Pay</b>.</q></span></li>
+      <li class="has-flag"><span class="n">6.3</span><span class="t">Maternity, paternity and other statutory pay <span class="flag">⚑ Confirm</span></span><span class="c"><q>Tell us as early as possible. We'll work out what's due.</q></span></li>
+      <li class="has-flag"><span class="n">6.4</span><span class="t">Holidays: 5.6 weeks (try it) <span class="flag">⚑ Confirm</span></span><span class="c"><q>Employees are entitled to <b>5.6 weeks'</b> paid holiday a year, including bank holidays.</q> Calculator: days worked per week → yearly entitlement. Confirm how CILNI handles part-time and variable hours.</span></li>
+      <li class="has-flag"><span class="n">6.5</span><span class="t">Holiday year and carry-over <span class="flag">⚑ Confirm</span></span><span class="c"><q>Your holiday year runs from ___. Up to <b>1.6 weeks</b> can be carried over.</q> Cover: record it as <b>extra hours</b> for whoever covers.</span></li>
+      <li class="has-flag"><span class="n">6.6</span><span class="t">Employer's liability insurance <span class="flag">⚑ Confirm</span></span><span class="c">A short card on what it is and that it's required. Brendan only covers this if asked. Should it be a "Tell me more" instead?</span></li>
+      <li class="has-flag"><span class="n">6.7</span><span class="t">Workplace pension <span class="flag">⚑ Confirm</span></span><span class="c"><q>Employees who meet the age and earnings thresholds must be <b>automatically enrolled</b>. We'll tell you when someone goes in and what to do.</q> Current thresholds and CILNI's process.</span></li>
+      <li><span class="n">6.8</span><span class="t">Letters from The Pensions Regulator</span><span class="c"><q>Every <b>3 years</b> you'll get a letter about a declaration or re-declaration. We get a copy and deal with it, so <b>just file it away</b>.</q></span></li>
+      <li><span class="n">6.9</span><span class="t">Your account, your say</span><span class="c"><q>Our contract is with <b>you</b>. Changes must come from you or your nominated representative.</q></span></li>
+      <li><span class="n">6.10</span><span class="t">Recap</span><span class="c"><b>Got it</b></span></li>
+    </ul>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>7 · When things change</h3><span class="time">6 cards · ~3 min</span></div>
+    <p class="note">These also work as a searchable reference after onboarding.</p>
+    <ul class="cards">
+      <li class="has-flag"><span class="n">7.1</span><span class="t">Taking on a new employee <span class="flag">⚑ Confirm</span></span><span class="c">What to send us and when.</span></li>
+      <li class="has-flag"><span class="n">7.2</span><span class="t">An employee leaves <span class="flag">⚑ Confirm</span></span><span class="c">Tell us their last day and any holiday owed.</span></li>
+      <li class="has-flag"><span class="n">7.3</span><span class="t">Bank holidays <span class="flag">⚑ Confirm</span></span><span class="c">How they're paid.</span></li>
+      <li class="has-flag"><span class="n">7.4</span><span class="t">Changes to your funding <span class="flag">⚑ Confirm</span></span><span class="c">If the Trust sends you information, forward it to us.</span></li>
+      <li class="has-flag"><span class="n">7.5</span><span class="t">Other changes <span class="flag">⚑ Confirm</span></span><span class="c">Hours, rate, address or bank details.</span></li>
+      <li><span class="n">7.6</span><span class="t">Not sure? Ask us</span><span class="c"><q>Even if it's not a payroll question, we'll point you in the right direction.</q></span></li>
+    </ul>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>Wrap-up</h3><span class="time">5–6 cards</span></div>
+    <ul class="cards">
+      <li><span class="n">W.1–3</span><span class="t">Recap cards</span><span class="c">"Your month in 4 steps" · "Your 5 golden rules": don't pay cash, don't pay HMRC until you get your reference, use the 13-character reference, pay HMRC on pay day, tell us about sickness, leave and changes · "Where to find help".</span></li>
+      <li class="has-flag"><span class="n">W.4</span><span class="t">Acknowledgement <span class="flag">⚑ Confirm</span></span><span class="c">Tick boxes: ☐ I'm the registered employer ☐ I understand the monthly routine ☐ I won't pay HMRC until I get my reference ☐ I know I can come back to this portal and contact CILNI any time. Suggested line: <q>By ticking these, you confirm you're happy for us to set up your payroll. You can come back to this portal at any time.</q> Final wording to agree with Kevin.</span></li>
+      <li><span class="n">W.5</span><span class="t">Choose your next step</span><span class="c"><b>A. I'm confident, start my payroll</b> → confirmation. <b>B. I'd like a call first</b> → preferred days (Mon–Fri), morning or afternoon, best phone number, and an optional "What would you like to go over?" box, pre-filled with any cards they flagged. <q>Calls are booked first come, first served. We can't promise a time, but a member of the team will contact you as soon as possible.</q></span></li>
+      <li><span class="n">W.6</span><span class="t">What happens next</span><span class="c">A: <q>We'll set up your payroll and send your documents before your first pay date.</q> B: <q>We'll be in touch to arrange your call.</q> Both: <q>This portal stays available. Bookmark it.</q></span></li>
+    </ul>
+  </div>
+
+  <div class="deck">
+    <div class="deckhead"><h3>Jargon buster</h3><span class="time">Always available</span></div>
+    <p>Employer · Employee · Nominated representative · Direct payment · The Trust · Payroll bureau · Gross pay · Net pay · Tax code · National Insurance · P30 · HMRC reference · Auto-enrolment · Statutory Sick Pay · Holiday year</p>
+  </div>
+</section>
+
+<section id="engagement">
+  <div class="eyebrow">5 · Engagement</div>
+  <h2>Keeping people engaged without a quiz</h2>
+  <ul class="points">
+    <li><b>Short cards with one idea each,</b> and the key number jumps out.</li>
+    <li><b>Brendan's voice on every card</b> for tone, emphasis and reassurance.</li>
+    <li><b>"Try it" calculators</b> for pay date and holiday. They make the rule personal, and nothing is submitted, so nothing can go wrong.</li>
+    <li><b>Annotated sample documents.</b> Tapping around a sample payslip is interactive and useful.</li>
+    <li><b>"What would you do?" scenarios</b> with the answer revealed, never scored.</li>
+    <li><b>A recap at the end of each section</b> with a "Got it" button. The hub fills up as they go.</li>
+    <li><b>Saved progress,</b> so they can stop without losing anything.</li>
+    <li><b>Welcome video now, 60–90 second clips later</b> (for example "Opening your payslip", "Setting up HMRC as a payee"), placed on the matching cards.</li>
+  </ul>
+  <p class="muted" style="margin-top:12px;font-size:15.5px">Chris is also researching learning and retention principles. Anything useful slots in here.</p>
+</section>
+
+<section id="versions">
+  <div class="eyebrow">6 · Two versions</div>
+  <h2>Should it also replace the submission form?</h2>
+  <p>The meeting left this open, so the plan covers both.</p>
+  <div class="versions">
+    <div class="ver rec">
+      <span class="tag">Recommended first</span>
+      <h3>Version A: Learn only</h3>
+      <dl>
+        <dt>What it is</dt><dd>The card deck above. The submission form stays separate, as now.</dd>
+        <dt>Pros</dt><dd>Simple. No new data errors. Quick to build and test.</dd>
+        <dt>Cons</dt><dd>Clients still do two things: the form and the portal.</dd>
+        <dt>Needs</dt><dd>Nothing extra.</dd>
+      </dl>
+    </div>
+    <div class="ver">
+      <h3>Version B: Learn and submit</h3>
+      <dl>
+        <dt>What it is</dt><dd>"A little explanation, a little information-gathering." Each data card sits right after the card that explains it. For example, employer details come straight after card 1.1 <i>You are the employer</i>.</dd>
+        <dt>Pros</dt><dd>One journey instead of two forms. Data is collected at the moment it's understood. The client could be live at the end.</dd>
+        <dt>Cons</dt><dd>Every field is a chance for a panicked mistake. Needs a staff review step, validation, and a proper web app rather than Canva.</dd>
+        <dt>Needs</dt><dd>The safeguards below and a draft → approve workflow.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="callout"><p><b>Recommendation:</b> build and pilot Version A first. Structure the cards so Version B's data cards can be added later without rewriting content.</p></div>
+
+  <h3 style="margin-top:24px">Safeguards Version B would need</h3>
+  <p class="muted" style="font-size:15.5px">Based on the common submission-form errors Brendan described.</p>
+  <ul class="points">
+    <li>Employer and employee <b>can't be the same person</b>. Flag it if the same name appears twice.</li>
+    <li>Ask "Are you filling this in for someone else?" first, so the service user's name doesn't end up in the employer fields by mistake.</li>
+    <li>Ask for the <b>direct payment account</b>, and warn if the bank details look like the employee's.</li>
+    <li>"Are the funds available in your direct payment account?" gets a follow-up if the answer is No, and a gentle check if it looks inconsistent.</li>
+    <li>Address and postcode lookup to cut down typos.</li>
+    <li>Every submission arrives as a <b>Draft</b>. Payroll can <b>edit and correct</b> it, then <b>Approve</b>. No "reject and start again": re-doing a 30-minute journey would lose people.</li>
+  </ul>
+</section>
+
+<section id="staff">
+  <div class="eyebrow">7 · Staff side</div>
+  <h2>Behind the scenes</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Need</th><th>Prototype (Canva or simple page)</th><th>Later (web app on CILNI server)</th></tr></thead>
+    <tbody>
+      <tr><td>Know who has finished</td><td>Email to payroll on completion: name, path chosen, date</td><td>Dashboard</td></tr>
+      <tr><td>Call requests</td><td>A spreadsheet row with availability, phone number, questions and flagged cards</td><td>A queue with status</td></tr>
+      <tr><td>Liability record</td><td>Timestamped acknowledgement and the sections viewed</td><td>Stored against the client record</td></tr>
+      <tr><td>Access</td><td>An unlisted link sent by email, as with registration</td><td>Simple login or email link, eventually one CILNI login shared with the budgeting system</td></tr>
+      <tr><td>Saved progress</td><td>Stored in the client's browser</td><td>Stored on the server, so it works on any device</td></tr>
+      <tr><td>Data check</td><td>Brendan cross-checks against Salesforce, as now</td><td>Draft → approve workflow with a Salesforce cross-check</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="phases">
+  <div class="eyebrow">8 · Phases</div>
+  <h2>Suggested order of work</h2>
+  <ol class="phases">
+    <li><div><b>Content sign-off</b>Brendan reviews the card content and answers the ⚑ items. Agree wording for the tricky cards: 1.4 "we must report" and W.4 acknowledgement.</div></li>
+    <li><div><b>Clickable prototype (Version A)</b>Placeholder illustrations, no narration. Test with Brendan, Kevin and a couple of friendly clients.</div></li>
+    <li><div><b>Pilot</b>Send the link to a handful of new employers before their normal setup call. Measure how much shorter the call gets and what people flag.</div></li>
+    <li><div><b>Narration and welcome video</b>Then offer the "confident, no call" path for real.</div></li>
+    <li><div><b>Branding and visual design</b></div></li>
+    <li><div><b>Web app</b>Progress saved across devices and a staff dashboard. Optionally Version B.</div></li>
+  </ol>
+  <h3 style="margin-top:12px">How we'll know it's working</h3>
+  <ul class="points">
+    <li>The share of clients choosing "no call"</li>
+    <li>Time to complete</li>
+    <li>The most-flagged cards, and whether they need rewriting</li>
+    <li>HMRC and payslip-password queries in the first 3 months, compared with clients who had a call</li>
+  </ul>
+</section>
+
+<section id="questions">
+  <div class="eyebrow">9 · Open questions</div>
+  <h2>For Brendan and Kevin</h2>
+  <ol class="questions">
+    <li>Monthly email: must clients always reply, or only if there are changes? The written guide and the call summary say different things.</li>
+    <li>What should the "CILNI payments" card say: fees, and how and when they're paid?</li>
+    <li>Can employees still receive payslips directly?</li>
+    <li>Current process and figures for pension auto-enrolment, Statutory Sick Pay, maternity and paternity pay, holiday year and carry-over, and bank holidays.</li>
+    <li>How direct can we be in the "what you tell us, we must report" card?</li>
+    <li>Should employer's liability insurance get a full card, or sit in "Tell me more"?</li>
+    <li>Final acknowledgement wording. Does it need a typed name and date?</li>
+    <li>Should Finish require every section to be viewed, or only the essentials (sections 1, 3 and 5)?</li>
+    <li>The call checklist mentions features from the old BrightPay Connect setup (the HMRC tab, marking payments as made, the calendar and documents tabs). Is any of that still relevant with Staffology, or is everything by email now?</li>
+    <li>Access for now: an unlisted link or a simple login?</li>
+  </ol>
+</section>
+
+<footer>Draft v0.1 · Layout and content only. Branding and visual design to follow.</footer>
+</main>
+</div>
+
+<script>
+(function(){
+  var box=document.getElementById('onlyFlags');
+  var count=document.querySelectorAll('.cards li.has-flag').length;
+  document.getElementById('flagCount').textContent=count+' cards need confirming';
+  function apply(){document.body.classList.toggle('only-flags',box.checked);}
+  try{box.checked=localStorage.getItem('onlyFlags')==='1';}catch(e){}
+  apply();
+  box.addEventListener('change',function(){apply();try{localStorage.setItem('onlyFlags',box.checked?'1':'0');}catch(e){}});
+})();
+</script>
