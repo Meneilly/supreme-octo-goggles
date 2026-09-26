@@ -78,6 +78,25 @@ label{font-weight:600;font-size:15px}
 input[type=date],input[type=tel],textarea{font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;max-width:100%}
 .result{font-weight:700;min-height:1.6em}
 .cardnav{display:flex;gap:10px;margin-top:14px}.cardnav .btn{flex:1}
+/* payslip */
+.slip{border:1.5px solid var(--line);border-radius:12px;overflow:hidden;font-size:14.5px;font-variant-numeric:tabular-nums;background:var(--surface)}
+.slip-head{background:var(--sunk);padding:10px 14px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.slip-head b{color:var(--ink);font-size:14px}
+.slip-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--line)}
+.slip-row .lbl{flex:1;min-width:0}
+.slip-row .lbl small{display:block;color:var(--muted);font-size:12.5px}
+.slip-row .amt{font-weight:600;white-space:nowrap}
+.slip-row.total{background:var(--soft);font-weight:700}
+.slip-row.total .amt{font-family:var(--head);font-weight:900;font-size:18px}
+.slip-row.sel{box-shadow:inset 4px 0 0 var(--lemon)}
+.hot{flex:none;width:30px;height:30px;border-radius:50%;border:0;background:var(--lemon);color:var(--on-lemon);font:900 14px var(--head);cursor:pointer;display:grid;place-items:center;position:relative}
+.hot.seen{background:var(--sunk);color:var(--muted);box-shadow:inset 0 0 0 1.5px var(--line)}
+.hot.cur{background:var(--cadet);color:#fff;box-shadow:0 0 0 3px var(--lemon)}
+.hot:focus-visible{outline:3px solid var(--lemon);outline-offset:2px}
+.explain{background:var(--sunk);border-top:1px solid var(--line);padding:12px 16px 14px 54px;display:grid;gap:4px;font-size:15px}
+.explain b{font-family:var(--head);font-size:17px}
+.count{font-size:13px;color:var(--muted)}
+.slip-note{font-size:12.5px;color:var(--muted);text-align:right;padding:6px 14px;border-top:1px solid var(--line)}
 /* finish */
 .checks{display:grid;gap:10px}
 .check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:12px;cursor:pointer}
@@ -128,7 +147,7 @@ var SECTIONS=[
  ]},
  {title:"Your documents",mins:5,cards:[
   {h:"Your payslips are locked",b:"Payslips are <b>password-protected</b>. Choose a password you're happy to share with your employee.",more:"Trouble opening one? Passwords are case-sensitive. Watch for spaces, or try copying and pasting the password. Still stuck? Tap Talk to us."},
-  {h:"Reading a payslip",b:"Each payslip shows gross pay, then the deductions: <b>tax</b>, <b>National Insurance</b> and <b>pension</b>. The amount at the bottom is the <span class='mark'>net pay</span>. That's what you pay."},
+  {h:"Reading a payslip",b:"Tap each number to see what it means.",payslip:true},
   {h:"Check it, then send it",b:"If the payslip looks right, send it to your employee with their pay. If something's wrong, tell us and we'll fix it before you pay."},
   {h:"The summary for the Trust",b:"A summary of each month's payroll. Keep it safe. The Trust may ask for it <span class='mark'>every quarter</span>, along with your bank statements."},
   {h:"Your buffer",fact:"5–8 weeks",factNote:"The Trust pays this much funding in advance, so there should always be money in the account on pay day."},
@@ -214,6 +233,7 @@ function card(){
     if(c.fact)body+='<p class="fact"><span>'+c.fact+'</span></p><p>'+c.factNote+'</p>';
     if(c.steps)body+='<ol class="list">'+c.steps.map(function(x){return '<li><b>'+esc(x)+'</b></li>';}).join('')+'</ol>';
     if(c.b)body+='<p>'+c.b+'</p>';
+    if(c.payslip)body+='<div id="slipBox" style="display:grid;gap:12px">'+payslip()+'</div>';
     if(c.calc)body+='<div class="calc"><label for="startDate">Try it: your employee\'s start date</label><input type="date" id="startDate"><p class="result" id="payResult"></p></div>';
     if(c.more)body+='<details><summary>Tell me more</summary><p>'+c.more+'</p></details>';
   }
@@ -253,6 +273,30 @@ function done(){
    '<p style="text-align:center;margin-top:18px"><button class="link" data-act="reset" type="button">Reset this mock-up</button></p>';
 }
 
+var SLIP=[
+ {lbl:"Standard hours",sub:"100 hours × £12.75",amt:"£1,275.00",t:"Hours and rate",x:"The hours you told us about this month, multiplied by the hourly rate. If they're wrong, tell us before you pay."},
+ {lbl:"Extra hours",sub:"8 hours × £12.75",amt:"£102.00",t:"Extra hours",x:"Additional hours, for example covering someone's holiday. They're listed separately so they're easy to check."},
+ {lbl:"Gross pay",amt:"£1,377.00",t:"Gross pay",x:"Total pay before anything is taken off.",strong:true},
+ {lbl:"Tax code",sub:"1257L",amt:"",t:"Tax code",x:"HMRC gives each employee a tax code. It tells us how much they can earn before paying tax. 1257L is the most common one."},
+ {lbl:"Income tax",amt:"−£65.80",t:"Income tax",x:"Tax on your employee's earnings, worked out from their tax code. You pay this to HMRC, not to your employee."},
+ {lbl:"National Insurance",amt:"−£26.32",t:"National Insurance",x:"Taken off once earnings go over a set amount. It counts towards your employee's State Pension and benefits. This also goes to HMRC."},
+ {lbl:"Pension",amt:"−£42.85",t:"Pension",x:"Your employee's contribution to their workplace pension. We'll tell you if and when an employee needs to be enrolled."},
+ {lbl:"Net pay",amt:"£1,242.03",t:"Net pay: what you pay",x:"The amount at the bottom is what you pay your employee. Send it with their payslip. The tax and National Insurance are included in the total on your P30, which you pay to HMRC.",total:true}
+];
+var slipSeen={},slipCur=-1;
+function payslip(){
+  var rows=SLIP.map(function(r,i){
+    var cls='slip-row'+(r.total?' total':'')+(i===slipCur?' sel':'');
+    var hc='hot'+(i===slipCur?' cur':(slipSeen[i]?' seen':''));
+    var row='<div class="'+cls+'"><button class="'+hc+'" type="button" data-hot="'+i+'" aria-expanded="'+(i===slipCur)+'" aria-label="Explain '+esc(r.t)+'">'+(i+1)+'</button><span class="lbl">'+(r.strong?'<b>'+esc(r.lbl)+'</b>':esc(r.lbl))+(r.sub?'<small>'+esc(r.sub)+'</small>':'')+'</span><span class="amt">'+r.amt+'</span></div>';
+    if(i===slipCur)row+='<div class="explain" aria-live="polite"><b>'+esc(r.t)+'</b><span>'+esc(r.x)+'</span></div>';
+    return row;
+  }).join('');
+  var n=Object.keys(slipSeen).length,e=slipCur>=0?SLIP[slipCur]:null;
+  return '<div class="slip"><div class="slip-head"><span><b>Sam Example</b><br>Personal assistant</span><span>Pay date 17 June 2026<br>Monthly</span></div>'+rows+'<div class="slip-note">Example figures only</div></div>'+
+   '<p class="count" style="text-align:center">'+(n?n+' of '+SLIP.length+' explored':'Tap a number to start')+'</p>';
+}
+
 function payDate(v){
   var p=v.split('-');if(p.length!==3)return '';
   var y=+p[0],m=+p[1]-1,d=+p[2];
@@ -270,6 +314,8 @@ function bind(){
   if(sd)sd.oninput=function(){document.getElementById('payResult').textContent=payDate(sd.value);};
   var acks=app.querySelectorAll('.ack');
   if(acks.length){var upd=function(){var ok=[].every.call(acks,function(a){return a.checked;});app.querySelectorAll('.choice .btn').forEach(function(b){b.disabled=!ok;});};acks.forEach(function(a){a.onchange=upd;});}
+  var sb=document.getElementById('slipBox');
+  if(sb)sb.onclick=function(e){var h=e.target.closest('[data-hot]');if(!h)return;var hi=+h.dataset.hot;slipSeen[hi]=1;slipCur=(slipCur===hi)?-1:hi;sb.innerHTML=payslip();var nb=sb.querySelector('[data-hot="'+hi+'"]');if(nb)nb.focus();};
   var f=document.getElementById('callForm');
   if(f)f.onsubmit=function(e){e.preventDefault();go('done',{path:'call'});};
 }
