@@ -66,6 +66,11 @@ p{margin:0}
 .btn.plain{background:transparent;color:var(--ink);border-color:var(--line)}
 .btn.round{width:54px;padding:0;flex:none}
 .btn:disabled{opacity:.35;cursor:not-allowed;filter:none}
+.btn.wait{position:relative;overflow:hidden;cursor:progress;filter:none}
+.btn.wait::after{content:"";position:absolute;left:0;bottom:0;height:4px;width:100%;background:var(--lemon);transform-origin:left;transform:scaleX(0);animation:fillbar var(--wait,1500ms) linear forwards}
+@keyframes fillbar{to{transform:scaleX(1)}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary.wait::after{background:var(--cadet)}}
+:root[data-theme="dark"] .btn.primary.wait::after{background:var(--cadet)}
 :focus-visible{outline:3px solid var(--lemon);outline-offset:2px}
 .row{display:flex;gap:10px;flex-wrap:wrap}.row .btn{flex:1 1 170px}
 .link{background:none;border:0;padding:0;color:var(--accent);font:700 15px var(--body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
@@ -277,9 +282,13 @@ var ICONS={
 var SEC_ICON=['people','pay','calendar','doc','bank','shield','swap'];
 function ic(n,cls){return '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+ICONS[n]+'</svg>';}
 
+var WAIT_MS=1500;   // how long Next stays locked the first time a card is shown
+var GUARD_MS=500;   // ignore a second press within this time (stops double-taps)
+var lastPress=0;
+function guard(){var n=Date.now();if(n-lastPress<GUARD_MS)return false;lastPress=n;return true;}
 var KEY='cilni-portal-draft2';
-var state={started:false,done:[],view:'welcome',sec:0,card:0};
-try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved)state=Object.assign(state,saved);}catch(e){}
+var state={started:false,done:[],seen:{},view:'welcome',sec:0,card:0};
+try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved)state=Object.assign(state,saved);if(!state.seen)state.seen={};}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 var app=document.getElementById('app'),stage=document.getElementById('stage'),dir='';
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -407,8 +416,14 @@ function payDate(v){
 
 
 function bind(){
-  document.querySelectorAll('[data-sec]').forEach(function(b){b.onclick=function(){go('card',{sec:+b.dataset.sec,card:0},'fwd');};});
-  document.querySelectorAll('#app [data-act],#stage [data-act]').forEach(function(b){b.onclick=function(){act(b.dataset.act);};});
+  document.querySelectorAll('[data-sec]').forEach(function(b){b.onclick=function(){if(!guard())return;go('card',{sec:+b.dataset.sec,card:0},'fwd');};});
+  document.querySelectorAll('#app [data-act],#stage [data-act]').forEach(function(b){b.onclick=function(){if(b.classList.contains('wait')||!guard())return;act(b.dataset.act);};});
+  var nx=app.querySelector('[data-act=next]'),key=state.sec+'-'+state.card;
+  if(nx&&state.view==='card'&&!state.seen[key]){
+    var ms=matchMedia('(prefers-reduced-motion: reduce)').matches?Math.round(WAIT_MS*.6):WAIT_MS;
+    nx.classList.add('wait');nx.setAttribute('aria-disabled','true');nx.style.setProperty('--wait',ms+'ms');
+    setTimeout(function(){nx.classList.remove('wait');nx.removeAttribute('aria-disabled');if(state.view==='card'&&state.sec+'-'+state.card===key){state.seen[key]=1;save();}},ms);
+  }
   var sd=document.getElementById('startDate');
   if(sd)sd.oninput=function(){document.getElementById('payResult').textContent=payDate(sd.value);};
   var acks=app.querySelectorAll('.ack');
@@ -432,9 +447,9 @@ function act(a){
     if(state.card<s.cards.length-1)go('card',{card:state.card+1},'fwd');
     else{if(state.done.indexOf(state.sec)<0)state.done.push(state.sec);go('hub');}
   }
-  else if(a==='reset'){state={started:false,done:[],view:'welcome',sec:0,card:0};save();go('welcome');}
+  else if(a==='reset'){state={started:false,done:[],seen:{},view:'welcome',sec:0,card:0};save();go('welcome');}
 }
-document.getElementById('talkBtn').onclick=function(){act('call');};
+document.getElementById('talkBtn').onclick=function(){if(guard())act('call');};
 if(state.view==='card'&&!SECTIONS[state.sec])state.view='hub';
 render();
 </script>
