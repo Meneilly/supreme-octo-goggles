@@ -1,0 +1,295 @@
+<title>CILNI Payroll Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap">
+<style>
+:root{
+  --cadet:#1D2951; --lemon:#F5C71A; --on-lemon:#1D2951;
+  --bg:#F4F5F9; --surface:#FFFFFF; --sunk:#ECEEF5; --ink:#1A2036; --muted:#565F7B; --line:#DADEEA;
+  --accent:#1D2951; --mark:#F5C71A; --soft:#FEF5D3;
+  --btn-bg:#1D2951; --btn-fg:#FFFFFF;
+  --head:"Lato","Segoe UI",system-ui,sans-serif; --body:"Open Sans","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#10162D; --surface:#182041; --sunk:#212A4E; --ink:#EDEFF6; --muted:#A9B1CD; --line:#303B66;
+    --accent:#F5C71A; --mark:rgba(245,199,26,.3); --soft:#2A2914;
+    --btn-bg:#F5C71A; --btn-fg:#1D2951;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#10162D; --surface:#182041; --sunk:#212A4E; --ink:#EDEFF6; --muted:#A9B1CD; --line:#303B66;
+  --accent:#F5C71A; --mark:rgba(245,199,26,.3); --soft:#2A2914;
+  --btn-bg:#F5C71A; --btn-fg:#1D2951;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--cadet);color:#fff;border-bottom:4px solid var(--lemon);padding-inline:16px}
+.topbar-in{max-width:640px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px}
+.brand{font-family:var(--head);font-weight:900;font-size:18px;letter-spacing:.01em}
+.brand span{color:var(--lemon)}
+.talk{background:transparent;border:1.5px solid var(--lemon);color:var(--lemon);font:600 14px var(--body);border-radius:999px;padding:6px 14px;cursor:pointer}
+.mockline{text-align:center;font-size:12.5px;color:var(--muted);padding:8px 16px 0}
+main{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:20px 56px}
+h1,h2{font-family:var(--head);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,6vw,36px);font-weight:900}
+h2{font-size:clamp(24px,5vw,30px);font-weight:900}
+p{margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(22px,5vw,36px);display:grid;gap:18px}
+.btn{font:700 16px var(--body);border-radius:12px;padding:14px 20px;cursor:pointer;border:1.5px solid transparent;min-height:52px}
+.btn.primary{background:var(--btn-bg);color:var(--btn-fg)}
+.btn.plain{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:focus-visible,.talk:focus-visible,.tile:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--lemon);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row .btn{flex:1 1 160px}
+.muted{color:var(--muted)}
+.video{aspect-ratio:16/9;max-width:100%;border-radius:12px;background:var(--cadet);color:#fff;display:grid;place-items:center;text-align:center;font-weight:600}
+.video b{display:block;width:56px;height:56px;border-radius:50%;background:var(--lemon);color:var(--cadet);margin:0 auto 8px;display:grid;place-items:center;font-size:20px}
+.list{margin:0;padding-left:20px;display:grid;gap:6px}
+.mark{background:linear-gradient(transparent 58%,var(--mark) 58%);font-weight:700;padding-inline:2px}
+/* hub */
+.hubhead{display:grid;gap:8px;margin-bottom:18px}
+.bar{height:8px;border-radius:9px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--lemon);transition:width .3s}
+.tiles{display:grid;gap:10px;margin-bottom:20px}
+.tile{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;color:var(--ink);font:inherit}
+.tile .num{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-weight:900;background:var(--sunk);color:var(--ink)}
+.tile.done .num{background:var(--lemon);color:var(--on-lemon)}
+.tile.next{border-color:var(--lemon);box-shadow:inset 0 0 0 1.5px var(--lemon)}
+.tile .t{font-weight:700;display:block}
+.tile .s{font-size:14px;color:var(--muted)}
+.tile .go{margin-left:auto;color:var(--muted);font-size:20px}
+/* card */
+.cardtop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--muted)}
+.back{background:none;border:0;color:var(--muted);font:600 14px var(--body);cursor:pointer;padding:6px 0}
+.dots{display:flex;gap:5px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--lemon)}
+.card{min-height:360px;align-content:start}
+.fact{font-family:var(--head);font-weight:900;font-size:clamp(30px,8vw,42px);line-height:1.1;color:var(--accent)}
+.fact span{background:linear-gradient(transparent 62%,var(--mark) 62%)}
+.warn{background:var(--soft);border-radius:12px;padding:12px 14px;font-weight:600}
+details{border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font-weight:700;color:var(--accent)}
+details p{margin-top:8px;color:var(--muted)}
+.calc{display:grid;gap:8px;background:var(--sunk);border-radius:12px;padding:14px}
+label{font-weight:600;font-size:15px}
+input[type=date],input[type=tel],textarea{font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;max-width:100%}
+.result{font-weight:700;min-height:1.6em}
+.cardnav{display:flex;gap:10px;margin-top:14px}.cardnav .btn{flex:1}
+/* finish */
+.checks{display:grid;gap:10px}
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:12px;cursor:pointer}
+.check input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--cadet)}
+.choice{display:grid;gap:10px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:15px}
+.opt input{accent-color:var(--cadet)}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:8px}
+legend{font-weight:600;font-size:15px;margin-bottom:8px;padding:0}
+.big-tick{width:64px;height:64px;border-radius:50%;background:var(--lemon);color:var(--cadet);display:grid;place-items:center;font-size:30px;font-weight:900}
+.link{background:none;border:0;padding:0;color:var(--accent);font:700 15px var(--body);text-decoration:underline;cursor:pointer}
+@media (prefers-reduced-motion:no-preference){.view{animation:in .25s ease-out}@keyframes in{from{transform:translateY(6px)}to{transform:none}}}
+</style>
+
+<div class="topbar"><div class="topbar-in">
+  <div class="brand">CILNI <span>Payroll</span></div>
+  <button class="talk" id="talkBtn" type="button">Talk to us</button>
+</div></div>
+<p class="mockline">Draft mock-up · example content · nothing you enter is sent</p>
+<main id="app" aria-live="polite"></main>
+
+<script>
+var SECTIONS=[
+ {title:"Who's who",mins:3,cards:[
+  {h:"You are the employer",b:"The <b>employer</b> is the person who agreed with our Advice Team to take on this role. HMRC will register you and write to you.",more:"This isn't always the person who receives care. If you manage the direct payment for a family member, the employer is usually you."},
+  {h:"The employee",b:"Your <b>employee</b> is the person you pay to provide support, such as a personal assistant.",fact:"Never the same person",factNote:"The employer and the employee can never be the same person."},
+  {h:"The Trust funds you. We run the payroll.",b:"Your Health &amp; Social Care Trust provides the funding. CILNI is your <b>payroll provider</b>. We don't hold your money, can't see your bank account, and can't change your funding."},
+  {h:"What you tell us, we report",b:"As a payroll bureau, we're <span class='mark'>legally required</span> to report the hours and pay you tell us about to HMRC. Only tell us about work paid for from your direct payment.",more:"A gift to a friend or family member isn't payroll. If you're unsure whether something counts, ask us before you send it in."},
+  {h:"Nominated representative",b:"Someone you choose to deal with us on your behalf. You can remove them at any time. Only <b>you or your nominated representative</b> can make changes to your account."},
+  {recap:["You're the employer","The Trust funds you and we run the payroll","We must report what you tell us"]}
+ ]},
+ {title:"Your staff and their pay",mins:4,cards:[
+  {h:"Check your details",b:"We'll confirm each employee's <b>start date, hours and rate of pay</b>. These often change after the Advice Team first sees them, so tell us if anything is different."},
+  {h:"Set hours or variable hours?",b:"<b>Set hours:</b> the same hours every month.<br><b>Variable hours:</b> hours change from month to month.",more:"We'll help you choose the one that suits your situation."},
+  {h:"Your pay rate",b:"Your rate is either set by a budget from our team, or chosen by you, as long as it's at or above the <span class='mark'>National Minimum Wage</span>."},
+  {h:"Your pay date",fact:"1 calendar month",factNote:"Your pay date is one calendar month after your first employee starts.",calc:true},
+  {h:"Payments for earlier work",b:"If you ask us to pay for work done before payroll started, we can. It goes through payroll, and <b>it will be taxed</b>."},
+  {recap:["Tell us if start dates, hours or rates change","Pay must be at least the minimum wage","Pay day is one month after your first employee starts"]}
+ ]},
+ {title:"Your monthly routine",mins:4,cards:[
+  {h:"Your month in 4 steps",steps:["We email you","You check the hours","We send your documents","You pay your employee and HMRC"]},
+  {h:"Our email arrives",fact:"7 days",factNote:"before your pay date, asking you to confirm your employees' hours."},
+  {h:"Three types of hours",b:"<b>Standard hours:</b> based on your weekly funding from the Trust.<br><b>Annual leave:</b> paid time off. We keep a running total.<br><b>Extra hours:</b> for example covering someone's holiday."},
+  {h:"Reply as soon as you can",b:"Send your hours to <b>payroll@cilni.org</b>. We need <span class='mark'>1 full working day</span> to prepare your documents."},
+  {h:"Pay day",b:"Pay your employee the <b>net pay</b> at the bottom of their payslip. Pay HMRC the amount on your P30, <span class='mark'>on the same day</span>."},
+  {recap:["We email you 7 days before pay day","Reply with the hours","Pay your employee and HMRC on the same day"]}
+ ]},
+ {title:"Your documents",mins:5,cards:[
+  {h:"Your payslips are locked",b:"Payslips are <b>password-protected</b>. Choose a password you're happy to share with your employee.",more:"Trouble opening one? Passwords are case-sensitive. Watch for spaces, or try copying and pasting the password. Still stuck? Tap Talk to us."},
+  {h:"Reading a payslip",b:"Each payslip shows gross pay, then the deductions: <b>tax</b>, <b>National Insurance</b> and <b>pension</b>. The amount at the bottom is the <span class='mark'>net pay</span>. That's what you pay."},
+  {h:"Check it, then send it",b:"If the payslip looks right, send it to your employee with their pay. If something's wrong, tell us and we'll fix it before you pay."},
+  {h:"The summary for the Trust",b:"A summary of each month's payroll. Keep it safe. The Trust may ask for it <span class='mark'>every quarter</span>, along with your bank statements."},
+  {h:"Your buffer",fact:"5–8 weeks",factNote:"The Trust pays this much funding in advance, so there should always be money in the account on pay day."},
+  {h:"The P30",b:"Shows <b>one total</b> to pay HMRC for all your employees. You don't need to work anything out."},
+  {recap:["Payslips are password-protected","Pay the net pay at the bottom","Keep your Trust summaries and bank statements"]}
+ ]},
+ {title:"HMRC",mins:4,cards:[
+  {h:"We register you with HMRC",b:"Once you've confirmed your details, <b>we</b> register you as an employer. It's the tax for your employees, not your own tax bill."},
+  {h:"Don't pay HMRC yet",warn:"Wait until we send your HMRC reference.",b:"You <b>can</b> still pay your employees in the meantime. The figures on their payslips are correct."},
+  {h:"Your HMRC reference",fact:"13 characters",factNote:"We'll email your HMRC bank details and reference. It never changes."},
+  {h:"Set up HMRC as a payee",b:"Add HMRC as a payee in your online banking, with your 13-character reference. Then each month, just pay that payee."},
+  {h:"Why the dates don't match",b:"HMRC's months run from the <span class='mark'>6th to the 5th</span>. The dates on your P30 won't always match your pay date. That's normal."},
+  {h:"Got a letter from HMRC?",b:"<b>Already paid?</b> Contact us and we'll help challenge it.<br><b>Not paid?</b> Pay the amount due. A little interest may be added."},
+  {recap:["Don't pay HMRC until you get your reference","Use your 13-character reference every time","Already paid and got a letter? Contact us"]}
+ ]},
+ {title:"Your responsibilities",mins:5,cards:[
+  {h:"Don't pay cash",fact:"Bank transfer or cheque",factNote:"Cash leaves no record. If an employee disputes their pay, you'd have no proof."},
+  {h:"Sickness and time off",b:"If your employee is off sick, or going on maternity or paternity leave, tell us when you send in the hours. They may be entitled to statutory pay."},
+  {h:"Holidays",fact:"5.6 weeks",factNote:"Employees get this much paid holiday a year, including bank holidays. Up to 1.6 weeks can be carried over."},
+  {h:"Workplace pension",b:"Some employees must be <b>automatically enrolled</b> in a pension. We'll tell you when, and what to do."},
+  {h:"Letters from The Pensions Regulator",b:"Every <span class='mark'>3 years</span> you'll get a letter about a declaration. We get a copy and deal with it, so just file it away."},
+  {h:"Your account, your say",b:"Our contract is with <b>you</b>. Changes must come from you or your nominated representative."},
+  {recap:["Never pay cash","Tell us about sickness and leave","Employees get 5.6 weeks' holiday"]}
+ ]},
+ {title:"When things change",mins:3,cards:[
+  {h:"Taking on a new employee",b:"Let us know before they start. We'll tell you what we need."},
+  {h:"An employee leaves",b:"Tell us their last working day and any holiday they haven't taken."},
+  {h:"Changes to hours, pay or details",b:"Email payroll@cilni.org with any change to hours, pay rate, address or bank details."},
+  {h:"Not sure? Ask us",b:"Even if it isn't a payroll question, we'll point you in the right direction."},
+  {recap:["Tell us about new starters and leavers","Email us with any changes","If in doubt, ask"]}
+ ]}
+];
+
+var KEY='cilni-portal-draft';
+var state={started:false,done:[],view:'welcome',sec:0,card:0};
+try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved)state=Object.assign(state,saved);}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+var app=document.getElementById('app');
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function go(view,extra){Object.assign(state,{view:view},extra||{});save();render();window.scrollTo(0,0);}
+
+function render(){
+  var v=state.view;
+  var html={welcome:welcome,hub:hub,card:card,finish:finish,call:call,done:done}[v]();
+  app.innerHTML='<div class="view">'+html+'</div>';
+  bind();
+}
+
+function welcome(){
+  return '<div class="panel">'+
+   '<h1>Welcome to your payroll</h1>'+
+   '<div class="video"><div><b>▶</b>Welcome video · 2 minutes</div></div>'+
+   '<ul class="list"><li>7 short sections, about 20 minutes</li><li>It isn\'t a test</li><li>Stop any time. We\'ll save your place</li><li>Prefer to talk? Ask for a call at any point</li></ul>'+
+   '<div class="row"><button class="btn primary" data-act="start" type="button">Let\'s start</button><button class="btn plain" data-act="call" type="button">I\'d rather talk</button></div>'+
+  '</div>';
+}
+
+function nextIndex(){for(var i=0;i<SECTIONS.length;i++)if(state.done.indexOf(i)<0)return i;return -1;}
+
+function hub(){
+  var n=state.done.length,total=SECTIONS.length,next=nextIndex();
+  var t=SECTIONS.map(function(s,i){
+    var d=state.done.indexOf(i)>=0,cls='tile'+(d?' done':'')+(i===next?' next':'');
+    return '<button class="'+cls+'" data-sec="'+i+'" type="button"><span class="num">'+(d?'✓':i+1)+'</span><span><span class="t">'+esc(s.title)+'</span><span class="s">'+(d?'Done · read again':(i===next?'Up next · ':'')+s.mins+' min')+'</span></span><span class="go" aria-hidden="true">›</span></button>';
+  }).join('');
+  var all=n===total;
+  return '<div class="hubhead"><h2>'+(all?'You\'ve been through everything':'Your payroll guide')+'</h2>'+
+    '<p class="muted">'+n+' of '+total+' sections done</p><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+n+'"><i style="width:'+(n/total*100)+'%"></i></div></div>'+
+    '<div class="tiles">'+t+'</div>'+
+    '<button class="btn primary" style="width:100%" data-act="finish" type="button" '+(all?'':'disabled')+'>Finish and choose your next step</button>'+
+    (all?'':'<p class="muted" style="text-align:center;margin-top:10px;font-size:14px">Opens when you\'ve been through every section</p>');
+}
+
+function card(){
+  var s=SECTIONS[state.sec],c=s.cards[state.card],last=state.card===s.cards.length-1;
+  var dots=s.cards.map(function(_,i){return '<i class="'+(i<=state.card?'on':'')+'"></i>';}).join('');
+  var body='';
+  if(c.recap){
+    body='<p class="muted" style="font-weight:600">Three things to remember</p><h2>'+esc(s.title)+'</h2><ol class="list">'+c.recap.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ol>';
+  }else{
+    body='<h2>'+c.h+'</h2>';
+    if(c.warn)body+='<p class="warn">'+c.warn+'</p>';
+    if(c.fact)body+='<p class="fact"><span>'+c.fact+'</span></p><p>'+c.factNote+'</p>';
+    if(c.steps)body+='<ol class="list">'+c.steps.map(function(x){return '<li><b>'+esc(x)+'</b></li>';}).join('')+'</ol>';
+    if(c.b)body+='<p>'+c.b+'</p>';
+    if(c.calc)body+='<div class="calc"><label for="startDate">Try it: your employee\'s start date</label><input type="date" id="startDate"><p class="result" id="payResult"></p></div>';
+    if(c.more)body+='<details><summary>Tell me more</summary><p>'+c.more+'</p></details>';
+  }
+  return '<div class="cardtop"><button class="back" data-act="hub" type="button">‹ All sections</button><span>'+(state.sec+1)+' · '+esc(s.title)+'</span></div>'+
+   '<div class="panel card">'+body+'</div>'+
+   '<div class="cardtop" style="justify-content:center;margin-top:14px"><span class="dots" aria-label="Card '+(state.card+1)+' of '+s.cards.length+'">'+dots+'</span></div>'+
+   '<div class="cardnav"><button class="btn plain" data-act="prev" type="button">Back</button><button class="btn primary" data-act="next" type="button">'+(last?'Got it':'Next')+'</button></div>';
+}
+
+function finish(){
+  var items=["I'm the registered employer","I understand the monthly routine","I won't pay HMRC until I get my reference","I know I can come back here and contact CILNI any time"];
+  return '<div class="panel"><h2>Nearly there</h2><p>Please tick each box to confirm.</p><div class="checks">'+
+   items.map(function(t,i){return '<label class="check" for="ack'+i+'"><input type="checkbox" id="ack'+i+'" class="ack"><span>'+esc(t)+'</span></label>';}).join('')+
+   '</div><p class="muted" style="font-size:15px">By ticking these, you confirm you\'re happy for us to set up your payroll.</p>'+
+   '<div class="choice"><button class="btn primary" data-act="confident" type="button" disabled>I\'m confident. Start my payroll</button><button class="btn plain" data-act="call" type="button" disabled>I\'d like a call first</button></div></div>'+
+   '<p style="text-align:center;margin-top:14px"><button class="link" data-act="hub" type="button">Back to all sections</button></p>';
+}
+
+function call(){
+  return '<form class="panel" id="callForm"><h2>Ask for a call</h2>'+
+   '<p>Calls are booked first come, first served. We can\'t promise a time, but we\'ll contact you as soon as we can.</p>'+
+   '<fieldset><legend>Which days suit you?</legend><div class="opts">'+['Mon','Tue','Wed','Thu','Fri'].map(function(d){return '<label class="opt" for="d'+d+'"><input type="checkbox" id="d'+d+'">'+d+'</label>';}).join('')+'</div></fieldset>'+
+   '<fieldset><legend>What time of day?</legend><div class="opts"><label class="opt" for="tAm"><input type="radio" name="t" id="tAm">Morning</label><label class="opt" for="tPm"><input type="radio" name="t" id="tPm">Afternoon</label><label class="opt" for="tAny"><input type="radio" name="t" id="tAny">Either</label></div></fieldset>'+
+   '<div style="display:grid;gap:6px"><label for="phone">Best phone number</label><input type="tel" id="phone" autocomplete="tel"></div>'+
+   '<div style="display:grid;gap:6px"><label for="topics">Anything you\'d like to go over? (optional)</label><textarea id="topics" rows="3"></textarea></div>'+
+   '<button class="btn primary" type="submit">Ask for a call</button></form>'+
+   '<p style="text-align:center;margin-top:14px"><button class="link" data-act="back" type="button">Go back</button></p>';
+}
+
+function done(){
+  var c=state.path==='call';
+  return '<div class="panel" style="justify-items:start"><div class="big-tick" aria-hidden="true">✓</div>'+
+   '<h2>'+(c?'Thanks. We\'ll be in touch.':'You\'re all set')+'</h2>'+
+   '<p>'+(c?'A member of the payroll team will phone you to arrange a time.':'We\'ll set up your payroll and email your documents before your first pay date.')+'</p>'+
+   '<p class="muted">This guide stays here whenever you need it. Bookmark this page.</p>'+
+   '<button class="btn plain" data-act="hub" type="button">Back to the guide</button></div>'+
+   '<p style="text-align:center;margin-top:18px"><button class="link" data-act="reset" type="button">Reset this mock-up</button></p>';
+}
+
+function payDate(v){
+  var p=v.split('-');if(p.length!==3)return '';
+  var y=+p[0],m=+p[1]-1,d=+p[2];
+  var ny=m===11?y+1:y,nm=(m+1)%12,last=new Date(ny,nm+1,0).getDate();
+  var dt=new Date(ny,nm,Math.min(d,last));
+  var f=dt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  var ord=function(n){var s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);};
+  return 'Your first pay date would be '+f+', then the '+ord(d)+' of each month.';
+}
+
+function bind(){
+  app.querySelectorAll('[data-sec]').forEach(function(b){b.onclick=function(){go('card',{sec:+b.dataset.sec,card:0});};});
+  app.querySelectorAll('[data-act]').forEach(function(b){b.onclick=function(){act(b.dataset.act);};});
+  var sd=document.getElementById('startDate');
+  if(sd)sd.oninput=function(){document.getElementById('payResult').textContent=payDate(sd.value);};
+  var acks=app.querySelectorAll('.ack');
+  if(acks.length){var upd=function(){var ok=[].every.call(acks,function(a){return a.checked;});app.querySelectorAll('.choice .btn').forEach(function(b){b.disabled=!ok;});};acks.forEach(function(a){a.onchange=upd;});}
+  var f=document.getElementById('callForm');
+  if(f)f.onsubmit=function(e){e.preventDefault();go('done',{path:'call'});};
+}
+
+function act(a){
+  var s=SECTIONS[state.sec];
+  if(a==='start'){state.started=true;go('hub');}
+  else if(a==='hub')go('hub');
+  else if(a==='call')go('call',{from:state.view});
+  else if(a==='back')go(state.from&&state.from!=='call'?state.from:'hub');
+  else if(a==='finish')go('finish');
+  else if(a==='confident')go('done',{path:'confident'});
+  else if(a==='prev'){if(state.card>0)go('card',{card:state.card-1});else go('hub');}
+  else if(a==='next'){
+    if(state.card<s.cards.length-1)go('card',{card:state.card+1});
+    else{if(state.done.indexOf(state.sec)<0)state.done.push(state.sec);go('hub');}
+  }
+  else if(a==='reset'){state={started:false,done:[],view:'welcome',sec:0,card:0};save();render();}
+}
+document.getElementById('talkBtn').onclick=function(){act('call');};
+if(state.view==='card'&&!SECTIONS[state.sec])state.view='hub';
+render();
+</script>
