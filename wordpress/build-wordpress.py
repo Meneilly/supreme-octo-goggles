@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Turn a portal draft into a paste-in snippet for a WordPress Custom HTML block.
-Usage: python3 wordpress/build-wordpress.py portal/draft-8.html wordpress/cilni-portal-draft-8-wordpress.html"""
+Usage: python3 wordpress/build-wordpress.py portal/draft-9.html wordpress/cilni-portal-draft-9-wordpress.html"""
 import re, sys
 
 src = open(sys.argv[1], encoding='utf-8').read()
@@ -11,9 +11,10 @@ markup = re.search(r'</style>(.*?)<script>', src, re.S).group(1).strip()
 js = re.search(r'<script>(.*?)</script>', src, re.S).group(1)
 
 ROOT = '#cilni-portal'
-IDS = ['app', 'stage', 'saveStatus', 'talkBtn', 'callForm', 'def', 'factsH', 'factsMsg', 'payResult',
-       'phone', 'saveFactsBtn', 'speakBtn', 'startDate', 'tAm', 'tAny', 'tPm', 'topics']
-KEYFRAMES = ['fillbar', 'pulse', 'rise', 'fromR', 'fromL', 'pop', 'nudge']
+DRAFT = re.search(r'draft-(\d+)', sys.argv[1]).group(1)
+# Every fixed id in the draft gets a cp- prefix so it can't clash with ids elsewhere on the website.
+IDS = sorted(set(re.findall(r'id=\\?"([A-Za-z][A-Za-z0-9]*)\\?"', src)), key=len, reverse=True)
+KEYFRAMES = sorted(set(re.findall(r'@keyframes\s+([A-Za-z0-9_-]+)', css)))
 
 # ---------- CSS ----------
 css = re.sub(r'/\*.*?\*/', '', css, flags=re.S)
@@ -21,7 +22,7 @@ for k in KEYFRAMES:
     css = re.sub(r'(@keyframes\s+)%s\b' % k, r'\1cp-%s' % k, css)
     css = re.sub(r'(animation:[^;}]*?)\b%s\b' % k, r'\1cp-%s' % k, css)
 for i in IDS:
-    css = re.sub(r'#%s\b' % i, '#cp-%s' % i, css)
+    css = re.sub(r'#%s\b(?![-\w])' % i, '#cp-%s' % i, css)
 
 def scope_sel(sel):
     sel = sel.strip()
@@ -102,12 +103,18 @@ css_out = reset + scoped + wrapper + tidy
 # ---------- markup ----------
 markup = markup.replace('<header class="stage">', '<div class="stage">').replace('</div></header>', '</div></div>')
 markup = markup.replace('<main id="app" aria-live="polite"></main>', '<div id="cp-app" class="cp-main" aria-live="polite"></div>')
+markup = markup.replace('<div id="menuHost"></div>', '').strip()
 for i in IDS:
-    markup = re.sub(r'id="%s"' % i, 'id="cp-%s"' % i, markup)
-markup = markup.replace('Draft 8 mock-up', 'Draft 8 mock-up (WordPress)')
+    markup = re.sub(r'(id|for|aria-controls|aria-labelledby)="%s"' % i, r'\1="cp-%s"' % i, markup)
+markup = markup.replace('Draft %s mock-up' % DRAFT, 'Draft %s mock-up (WordPress)' % DRAFT)
+if 'menuHost' in src:
+    markup += '\n<div id="cp-menuHost"></div>'
 assert '<header' not in markup and '<main' not in markup
 
 # ---------- JS ----------
+def must(a, b, js_in):
+    assert a in js_in, 'not found in draft: ' + a
+    return js_in.replace(a, b)
 # Word meanings: {{word}} instead of [[word]] so WordPress never treats them as shortcodes.
 for a, b in [(r"/\[\[([^\]]+)\]\]/g", r"/\{\{([^}]+)\}\}/g"), (r"/\[\[|\]\]/g", r"/\{\{|\}\}/g")]:
     assert a in js, a
@@ -117,15 +124,22 @@ for i in IDS:
     js = re.sub(r"""(getElementById\(['"])%s(['"]\))""" % i, r'\1cp-%s\2' % i, js)
     js = re.sub(r'''(id=\\?["'])%s(\\?["'])''' % i, r'\1cp-%s\2' % i, js)
     js = re.sub(r'''(for=\\?["'])%s(\\?["'])''' % i, r'\1cp-%s\2' % i, js)
-    js = re.sub(r'''(aria-labelledby=\\?["'])%s(\\?["'])''' % i, r'\1cp-%s\2' % i, js)
+    js = re.sub(r'''((?:aria-labelledby|aria-controls)=\\?["'])%s(\\?["'])''' % i, r'\1cp-%s\2' % i, js)
+    js = re.sub(r'#%s\b(?![-\w])' % i, '#cp-%s' % i, js)
 js = js.replace("id=\"d'+d+'\"", "id=\"cp-d'+d+'\"").replace("for=\"d'+d+'\"", "for=\"cp-d'+d+'\"")
 js = js.replace("getElementById('d'+d)", "getElementById('cp-d'+d)")
 js = js.replace("id=\"ack'+i+'\"", "id=\"cp-ack'+i+'\"").replace("for=\"ack'+i+'\"", "for=\"cp-ack'+i+'\"")
 js = js.replace("F.time==='tAm'", "F.time==='cp-tAm'").replace("F.time==='tPm'", "F.time==='cp-tPm'").replace("F.time==='tAny'", "F.time==='cp-tAny'")
-js = js.replace("'#app [data-act],#stage [data-act]'", "'#cp-app [data-act],#cp-stage [data-act]'")
 js = js.replace("document.querySelectorAll('[data-sec]')", "root.querySelectorAll('[data-sec]')")
 js = js.replace("document.body.classList.toggle('in-card'", "root.classList.toggle('in-card'")
 js = js.replace("document.body.classList.toggle('big'", "root.classList.toggle('big'")
+js = js.replace("document.body.classList.toggle('wide'", "root.classList.toggle('wide'")
+# Draft 9+: the Display menu sets light or dark on the portal itself, not on the whole website.
+# The settings line picks what a new visitor starts with; "Match device" follows their device.
+if 'var root=document.documentElement,hostTheme=root.getAttribute(\'data-theme\')' in js:
+    js = js.replace("var root=document.documentElement,hostTheme=root.getAttribute('data-theme')", "var hostTheme=null")
+    assert "theme:'auto'," in js
+    js = js.replace("theme:'auto',", "theme:CFG.theme,", 1)
 js = js.replace("render();window.scrollTo(0,0);}", "render();toTop();}")
 
 # Tunables come from the settings line at the top of the snippet.
@@ -134,7 +148,8 @@ assert old_wait in js
 js = js.replace(old_wait, "var WAIT_BASE_MS=CFG.waitBaseMs, WAIT_PER_WORD_MS=CFG.waitPerWordMs, WAIT_MIN_MS=CFG.waitMinMs, WAIT_MAX_MS=CFG.waitMaxMs;")
 assert "var GUARD_MS=500;" in js
 js = js.replace("var GUARD_MS=500;", "var GUARD_MS=CFG.guardMs;")
-js = js.replace("var KEY='cilni-portal-draft8';", "var KEY=CFG.storageKey;")
+js, n = re.subn(r"var KEY='cilni-portal-draft\d+';", "var KEY=CFG.storageKey;", js)
+assert n == 1
 
 # Fix from Draft 8: sending the call form straight after typing could hit a leftover save timer and throw an error.
 old_submit = "f.onsubmit=function(e){e.preventDefault();go('done',"
@@ -178,11 +193,6 @@ js = js[:start] + '''function saveFacts(){
 js = js.replace("if(e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,textarea,select'))return;",
                 "if(e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,textarea,select'))return;\n    if(e.target!==document.body&&!root.contains(e.target))return;")
 js = js.replace("render();\ninitCloud();\ninitDownloads();\n", "render();\n")
-js = js.replace("var app=document.getElementById('cp-app'),stage=document.getElementById('cp-stage'),dir='';",
-                "var app=document.getElementById('cp-app'),stage=document.getElementById('cp-stage'),dir='';\n"
-                ""
-                "// On a card, line the portal up with the top of the window so the whole card and its buttons fit, as in the standalone draft.\n"
-                "function toTop(){var t=root.getBoundingClientRect().top;if(t<0||(t>0&&state.view==='card'&&!showResume))window.scrollBy(0,t);}")
 
 for bad in ['window.claude', 'initCloud', 'downloads=', 'downloads.save', 'cloud.', "getElementById('app')", "getElementById('stage')", 'document.body.classList', 'scrollTo(0,0)', '[[']:
     assert bad not in js, bad
@@ -190,7 +200,10 @@ for bad in ['window.claude', 'initCloud', 'downloads=', 'downloads.save', 'cloud
 prelude = '''var CFG=Object.assign({theme:'light',waitBaseMs:700,waitPerWordMs:55,waitMinMs:1000,waitMaxMs:3500,guardMs:500,tidyPage:true,storageKey:'cilni-portal-wp'},window.CILNI_PORTAL_SETTINGS||{});
 var root=document.getElementById('cilni-portal');
 if(CFG.theme==='light'||CFG.theme==='dark')root.setAttribute('data-theme',CFG.theme);else root.removeAttribute('data-theme');
+if(CFG.theme!=='light'&&CFG.theme!=='dark')CFG.theme='auto';
 if(CFG.tidyPage)document.body.classList.add('cilni-portal-page');
+// On a card, line the portal up with the top of the window so the whole card and its buttons fit, as in the standalone draft.
+function toTop(){var t=root.getBoundingClientRect().top;if(t<0||(t>0&&state.view==='card'&&!showResume))window.scrollBy(0,t);}
 '''
 js_out = '(function(){\n"use strict";\n' + prelude + js.strip() + '\n})();'
 
@@ -199,7 +212,7 @@ fonts = '\n'.join(re.findall(r'<link[^>]+>', src))
 settings = ("<script>window.CILNI_PORTAL_SETTINGS={theme:'light', waitBaseMs:700, waitPerWordMs:55, waitMinMs:1000, "
             "waitMaxMs:3500, guardMs:500, tidyPage:true, storageKey:'cilni-portal-wp'};</script>")
 
-out = f'''<!-- CILNI Payroll Portal, Draft 8 (WordPress version). Paste all of this into one Custom HTML block on a Full Width page. -->
+out = f'''<!-- CILNI Payroll Portal, Draft {DRAFT} (WordPress version). Paste all of this into one Custom HTML block on a Full Width page. -->
 <!-- Settings (next line): theme 'light', 'dark' or 'auto' (follows the device) · the Next delay (ms) · tidyPage true hides the page title and extra space · change storageKey to wipe everyone's saved progress. -->
 {settings}
 {fonts}
